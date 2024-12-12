@@ -12,6 +12,7 @@ const {
   registerUser,
   checkCredentials,
   getProducts,
+  getProductById,
 } = require("./consultas");
 
 app.post("/usuarios", async (req, res) => {
@@ -40,6 +41,17 @@ app.post("/login", async (req, res) => {
 app.get("/productos", async (req, res) => {
   try {
     const result = await getProducts();
+    res.json([result]);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al obtener productos");
+  }
+});
+
+app.get("/productos/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await getProductById(id);
     res.json([result]);
   } catch (error) {
     console.error(error);

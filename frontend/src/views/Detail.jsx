@@ -1,10 +1,22 @@
 import { Button, Container, Card, Row, Col, Image } from "react-bootstrap";
 import { useParams } from "react-router-dom";
-import { Productos } from "../components/utils/Productos";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Detail() {
   const { id } = useParams();
-  const producto = Productos.find((item) => item.id === id);
+  const [producto, setProductos] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:3000/productos/${id}`)
+      .then((response) => {
+        setProductos(response.data[0]);
+      })
+      .catch((error) => {
+        console.error("Error al obtener productos:", error);
+      });
+  }, []);
 
   if (!producto) {
     return (
@@ -16,9 +28,20 @@ function Detail() {
 
   return (
     <>
-      <Container className="d-flex justify-content-center align-items-center pt-5">
-        <Card className="mb-3" style={{ width: "auto" }}>
-          <Row className="g-0">
+      <Container className="d-flex justify-content-center pt-5">
+        <Card
+          className="mb-3"
+          style={{
+            width: "80%",
+          }}
+        >
+          <Row
+            className="g-0"
+            style={{
+              display: "flex",
+              justifyContent: "space-around",
+            }}
+          >
             <Col md={5}>
               <Image
                 src={producto.img}
@@ -31,7 +54,7 @@ function Detail() {
                 }}
               />
             </Col>
-            <Col md={7}>
+            <Col md={7} style={{ width: "40%" }}>
               <Card.Body>
                 <Card.Title>{producto.title}</Card.Title>
                 <Card.Text>{producto.descripcion}</Card.Text>
