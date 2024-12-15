@@ -23,6 +23,10 @@ const {
   getMyProducts,
 } = require("./consultas");
 
+app.get("/", (req, res) => {
+  res.send("El servidor está funcionando correctamente.");
+});
+
 app.get("/usuarios", async (req, res) => {
   const Authorization = req.header("Authorization");
   const token = Authorization.split("Bearer ")[1];
