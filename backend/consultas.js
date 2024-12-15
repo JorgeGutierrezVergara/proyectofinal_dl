@@ -24,12 +24,10 @@ const getProductById = async (id) => {
   const {
     rows: [producto],
   } = await pool.query(consulta, values);
-  console.log("consulta: " + consulta);
   return producto;
 };
 
 const getProducts = async () => {
-  console.log("hola");
   const consulta = "SELECT * FROM productos";
   const { rows } = await pool.query(consulta);
   return rows;
@@ -43,6 +41,43 @@ const registerUser = async (usuario) => {
   await pool.query(consulta, values);
 };
 
+const addFavorite = async (usuario_id, producto_id) => {
+  const values = [usuario_id, producto_id];
+  const consulta = "INSERT INTO favoritos VALUES (DEFAULT, $1, $2)";
+  await pool.query(consulta, values);
+};
+
+const deleteFavorite = async (usuario_id, producto_id) => {
+  const values = [usuario_id, producto_id];
+  const consulta =
+    "DELETE FROM favoritos WHERE usuario_id = $1 AND producto_id = $2";
+  await pool.query(consulta, values);
+};
+
+const getFavorites = async (usuario_id) => {
+  const value = [usuario_id];
+  const consulta =
+    "SELECT p.id AS producto_id, p.title, p.descripcion, p.price, p.is_active, p.img FROM favoritos f JOIN productos p ON f.producto_id = p.id WHERE f.usuario_id = $1";
+  const { rows } = await pool.query(consulta, value);
+  return rows;
+};
+
+const isItFavorite = async (usuario_id, producto_id) => {
+  const values = [usuario_id, producto_id];
+  const consulta =
+    "SELECT * FROM favoritos WHERE usuario_id = $1 AND producto_id = $2";
+  const { rows } = await pool.query(consulta, values);
+  return rows;
+};
+
+const getMyProducts = async (usuario_id) => {
+  const value = [usuario_id];
+  const consulta =
+    "SELECT p.id AS producto_id, p.title, p.descripcion, p.price, p.is_active, p.img FROM productos p JOIN usuarios u ON p.id_usuario = u.id WHERE u.id = $1";
+  const { rows } = await pool.query(consulta, value);
+  return rows;
+};
+
 const checkCredentials = async (email, password) => {
   const values = [email];
   const consulta = "SELECT * FROM usuarios WHERE email = $1";
@@ -51,11 +86,16 @@ const checkCredentials = async (email, password) => {
     rowCount,
   } = await pool.query(consulta, values);
 
+  if (rowCount === 0) {
+    throw { code: 401, message: "Email o contraseña incorrecta" };
+  }
+
   const { password: passwordEncriptada } = usuario;
   const passwordEsCorrecta = bcrypt.compareSync(password, passwordEncriptada);
   if (!passwordEsCorrecta) {
     throw { code: 401, message: "Email o contraseña incorrecta" };
   }
+  return usuario;
 };
 
 module.exports = {
@@ -64,4 +104,9 @@ module.exports = {
   checkCredentials,
   getProducts,
   getProductById,
+  addFavorite,
+  isItFavorite,
+  deleteFavorite,
+  getFavorites,
+  getMyProducts,
 };

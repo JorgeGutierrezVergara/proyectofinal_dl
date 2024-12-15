@@ -1,18 +1,44 @@
 import { Button, Container, Card, Row, Col, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { HorizontalProductCard } from "../components/Cards";
-import { Productos } from "../components/utils/Productos";
-//import { useFavorites } from "../contexts/Context";
+import { useState, useContext, useEffect } from "react";
+import axios from "axios";
 
 function Profile() {
   const navigate = useNavigate();
-  // const { favorites } = useFavorites();
+  const [favoritos, setFavoritos] = useState([]);
+  const [misProductos, setMisProductos] = useState([]);
+  const [user, setUser] = useState([]);
 
-  // const productosDeseados = Productos.filter((producto) =>
-  //   favorites.includes(producto.id)
-  // );
-
-  // const primerosDosDeseados = productosDeseados.slice(0, 2);
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = window.sessionStorage.getItem("token");
+      if (!token) {
+        alert("Token no encontrado. Por favor, inicia sesión.");
+        navigate("/login");
+        return;
+      }
+      try {
+        const [favoritosRes, misProductosRes, userRes] = await Promise.all([
+          axios.get("http://localhost:3000/favoritos", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("http://localhost:3000/mis_productos", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("http://localhost:3000/usuarios", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+        setFavoritos(favoritosRes.data.result);
+        setMisProductos(misProductosRes.data[0]);
+        setUser(userRes.data[0]);
+      } catch (error) {
+        console.error("Error al obtener datos:", error);
+      }
+    };
+    fetchData();
+  }, [navigate]);
 
   const irASubir = () => {
     navigate(`/upload`);
@@ -21,34 +47,29 @@ function Profile() {
   return (
     <Container className="d-flex flex-column justify-content-center align-items-center pt-5">
       <Card className="mb-3" style={{ minWidth: "450px" }}>
-        <Row className="g-0">
-          <Col md={4}>
-            <Image src="..." className="img-fluid rounded-start" alt="..." />
-          </Col>
-          <Col md={8}>
-            <Card.Body>
-              <Card.Title>Nombre</Card.Title>
-              <Card.Text>email</Card.Text>
-              <Card.Text>telefono</Card.Text>
-              <Button variant="primary" type="submit" className="w-auto">
-                Actualizar datos
-              </Button>
-            </Card.Body>
-          </Col>
-        </Row>
+        <Card.Body>
+          <Card.Title>Bienvenido, {user.nombre}</Card.Title>
+          <div>
+            <Card.Text>email: {user.email}</Card.Text>
+            <Card.Text>telefono: {user.phone}</Card.Text>
+            {/* <Button variant="primary" type="submit" className="w-auto">
+              Actualizar datos
+            </Button> */}
+          </div>
+        </Card.Body>
       </Card>
 
-      <Container className="d-flex flex-dir-col justify-content-center align-items-center m-5">
+      <Container className="d-flex flex-dir-col justify-content-center align-items-start m-5">
         <Card className="m-3 p-3">
           <Card.Title className="text-center">Lista de deseados</Card.Title>
 
-          {/* {primerosDosDeseados.length > 0 ? (
-            primerosDosDeseados.map((producto) => (
-              <HorizontalProductCard key={producto.id} product={producto} />
+          {favoritos.length > 0 ? (
+            favoritos.map((producto) => (
+              <HorizontalProductCard product={producto} key={producto.id} />
             ))
           ) : (
             <p>No tienes productos en tu lista de deseados.</p>
-          )} */}
+          )}
         </Card>
 
         <Card className="m-3 p-3">
@@ -66,8 +87,13 @@ function Profile() {
             </Button>
           </Container>
 
-          <HorizontalProductCard product={Productos[0]} />
-          <HorizontalProductCard product={Productos[0]} />
+          {misProductos.length > 0 ? (
+            misProductos.map((producto) => (
+              <HorizontalProductCard product={producto} key={producto.id} />
+            ))
+          ) : (
+            <p>No tienes productos a la venta.</p>
+          )}
         </Card>
       </Container>
     </Container>

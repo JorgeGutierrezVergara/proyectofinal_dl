@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import useDeveloper from "./hooks/useDeveloper";
 import Context from "./contexts/Context";
-
 import Navbar from "./components/Navbar";
 import Home from "./views/Home";
 import Login from "./views/Login";

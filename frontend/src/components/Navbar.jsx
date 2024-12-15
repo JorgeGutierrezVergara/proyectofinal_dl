@@ -1,7 +1,6 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Context from "../contexts/Context";
-
 import Container from "react-bootstrap/Container";
 import Navbar from "react-bootstrap/Navbar";
 import Nav from "react-bootstrap/Nav";

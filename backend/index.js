@@ -13,7 +13,25 @@ const {
   checkCredentials,
   getProducts,
   getProductById,
+  addFavorite,
+  isItFavorite,
+  deleteFavorite,
+  getFavorites,
+  getMyProducts,
 } = require("./consultas");
+
+app.get("/usuarios", async (req, res) => {
+  const Authorization = req.header("Authorization");
+  const token = Authorization.split("Bearer ")[1];
+  try {
+    const decoded = jwt.verify(token, "az_AZ");
+    const usuario_id = decoded.id;
+    const result = await getUserById(usuario_id);
+    res.json([result]);
+  } catch (error) {
+    res.status(error.code || 500).send(error);
+  }
+});
 
 app.post("/usuarios", async (req, res) => {
   try {
@@ -28,13 +46,84 @@ app.post("/usuarios", async (req, res) => {
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    await checkCredentials(email, password);
-    const token = jwt.sign({ email }, "az_AZ");
+    const usuario = await checkCredentials(email, password);
+    const { id } = usuario;
+    const token = jwt.sign({ id, email }, "az_AZ");
     res.send({ token });
-    console.log("usuario:" + email + " iniciado");
+  } catch (error) {
+    console.error(error);
+    res.status(error.code || 500).send(error);
+  }
+});
+
+app.get("/favoritos", async (req, res) => {
+  const Authorization = req.header("Authorization");
+  const token = Authorization.split("Bearer ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "No se encontró el token." });
+  }
+  try {
+    const decoded = jwt.verify(token, "az_AZ");
+    const usuario_id = decoded.id;
+    const result = await getFavorites(usuario_id);
+
+    res.json({ result });
+  } catch (error) {
+    console.error("Error al obtener favoritos:", error.message);
+    res.status(500).json({ message: "Error al obtener favoritos" });
+  }
+});
+
+app.post("/favoritos/:id", async (req, res) => {
+  const { id: producto_id } = req.params;
+  const Authorization = req.header("Authorization");
+  const token = Authorization.split("Bearer ")[1];
+  try {
+    const decoded = jwt.verify(token, "az_AZ");
+    const usuario_id = decoded.id;
+    await addFavorite(usuario_id, producto_id);
+    res
+      .status(201)
+      .send({ message: "Producto añadido a favoritos exitosamente." });
   } catch (error) {
     console.log(error);
     res.status(error.code || 500).send(error);
+  }
+});
+
+app.get("/favoritos/:id", async (req, res) => {
+  const { id: producto_id } = req.params;
+  const Authorization = req.header("Authorization");
+  const token = Authorization.split("Bearer ")[1];
+
+  try {
+    const decoded = jwt.verify(token, "az_AZ");
+    const usuario_id = decoded.id;
+    const result = await isItFavorite(usuario_id, producto_id);
+
+    const isFavorite = result.length > 0;
+    res.json({ isFavorite });
+  } catch (error) {
+    console.error("Error al verificar favoritos:", error.message);
+    res.status(500).json({ message: "Error al verificar favoritos" });
+  }
+});
+
+app.delete("/favoritos/:id", async (req, res) => {
+  const { id: producto_id } = req.params;
+  const Authorization = req.header("Authorization");
+  const token = Authorization.split("Bearer ")[1];
+
+  try {
+    const decoded = jwt.verify(token, "az_AZ");
+    const usuario_id = decoded.id;
+    await deleteFavorite(usuario_id, producto_id);
+    res
+      .status(201)
+      .send({ message: "Producto eliminado de favoritos exitosamente." });
+  } catch (error) {
+    console.error("Error al verificar favoritos:", error.message);
+    res.status(500).json({ message: "Error al verificar favoritos" });
   }
 });
 
@@ -59,11 +148,16 @@ app.get("/productos/:id", async (req, res) => {
   }
 });
 
-app.get("/usuarios", async (req, res) => {
+app.get("/mis_productos/", async (req, res) => {
+  const Authorization = req.header("Authorization");
+  const token = Authorization.split("Bearer ")[1];
   try {
-    const usuario = await getUserById("jorge");
-    res.json([usuario]);
+    const decoded = jwt.verify(token, "az_AZ");
+    const usuario_id = decoded.id;
+    const result = await getMyProducts(usuario_id);
+    res.json([result]);
   } catch (error) {
-    res.status(error.code || 500).send(error);
+    console.error(error);
+    res.status(500).send("Error al obtener productos");
   }
 });

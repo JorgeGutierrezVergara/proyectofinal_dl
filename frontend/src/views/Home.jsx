@@ -18,14 +18,6 @@ const Home = () => {
       });
   }, []);
 
-  // const agregarAFavoritos = (id) => {
-  //   if (favorites.includes(id)) {
-  //     removeFavorite(id);
-  //   } else {
-  //     addFavorite(id);
-  //   }
-  // // };
-
   return (
     <Container className="d-flex justify-content-center align-items-center pt-5">
       <Row className="justify-content-center gx-4 gy-3">
