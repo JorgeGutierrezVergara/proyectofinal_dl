@@ -4,7 +4,10 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
 app.use(express.json());
-app.listen(3000, console.log("Servidor levantado en el puerto 3000"));
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Servidor levantado en el puerto ${port}`);
+});
 app.use(cors());
 
 const {
