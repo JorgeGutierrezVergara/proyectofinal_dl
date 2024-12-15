@@ -1,17 +1,18 @@
 const { Pool } = require("pg");
 const bcrypt = require("bcryptjs");
+require("dotenv").config();
 
 const pool = new Pool({
-  host: "localhost",
-  user: "postgres",
-  password: "12345",
-  database: "pfinal",
-  allowExitOnIdle: true,
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 const getUserById = async (id) => {
   const values = [id];
-  const consulta = "SELECT * FROM usuarios WHERE nombre = $1";
+  const consulta = "SELECT * FROM usuarios WHERE id = $1";
   const {
     rows: [usuarios],
   } = await pool.query(consulta, values);

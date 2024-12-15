@@ -23,13 +23,15 @@ const {
 app.get("/usuarios", async (req, res) => {
   const Authorization = req.header("Authorization");
   const token = Authorization.split("Bearer ")[1];
+  console.log("token: " + token);
   try {
     const decoded = jwt.verify(token, "az_AZ");
     const usuario_id = decoded.id;
     const result = await getUserById(usuario_id);
     res.json([result]);
   } catch (error) {
-    res.status(error.code || 500).send(error);
+    console.error(error);
+    res.status(500).send("Error al obtener productos");
   }
 });
 
@@ -49,6 +51,7 @@ app.post("/login", async (req, res) => {
     const usuario = await checkCredentials(email, password);
     const { id } = usuario;
     const token = jwt.sign({ id, email }, "az_AZ");
+    console.log(token);
     res.send({ token });
   } catch (error) {
     console.error(error);

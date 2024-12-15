@@ -48,13 +48,10 @@ function Profile() {
     <Container className="d-flex flex-column justify-content-center align-items-center pt-5">
       <Card className="mb-3" style={{ minWidth: "450px" }}>
         <Card.Body>
-          <Card.Title>Bienvenido, {user.nombre}</Card.Title>
+          <Card.Title>{user.nombre}</Card.Title>
           <div>
             <Card.Text>email: {user.email}</Card.Text>
             <Card.Text>telefono: {user.phone}</Card.Text>
-            {/* <Button variant="primary" type="submit" className="w-auto">
-              Actualizar datos
-            </Button> */}
           </div>
         </Card.Body>
       </Card>
