@@ -10,6 +10,20 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
+console.log("Intentando conectar a la base de datos...");
+
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) {
+    console.error("Error de conexión:", err);
+    return;
+  }
+
+  console.log("Conexión exitosa a la base de datos. Hora actual:", res.rows);
+
+  // Aquí podrías realizar otras consultas o acciones.
+  pool.end();
+});
+
 const getUserById = async (id) => {
   const values = [id];
   const consulta = "SELECT * FROM usuarios WHERE id = $1";
