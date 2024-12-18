@@ -3,6 +3,16 @@ const app = express();
 const cors = require("cors");
 const jwt = require("jsonwebtoken");
 
+process.on("unhandledRejection", (error) => {
+  console.error("Unhandled rejection:", error);
+  process.exit(1);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught exception:", error);
+  process.exit(1);
+});
+
 app.use(express.json());
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

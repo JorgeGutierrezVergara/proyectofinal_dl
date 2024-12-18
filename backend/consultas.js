@@ -8,21 +8,25 @@ const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  ssl: {
+    rejectUnauthorized: false, // Desactiva la validación de certificados para pruebas
+  },
 });
 
 console.log("Intentando conectar a la base de datos...");
 
-pool.query("SELECT NOW()", (err, res) => {
-  if (err) {
+const checkDatabaseConnection = async () => {
+  try {
+    const res = await pool.query("SELECT NOW()");
+    console.log("Conexión exitosa a la base de datos. Hora actual:", res.rows);
+  } catch (err) {
     console.error("Error de conexión:", err);
-    return;
+  } finally {
+    pool.end();
   }
+};
 
-  console.log("Conexión exitosa a la base de datos. Hora actual:", res.rows);
-
-  // Aquí podrías realizar otras consultas o acciones.
-  pool.end();
-});
+checkDatabaseConnection();
 
 const getUserById = async (id) => {
   const values = [id];
