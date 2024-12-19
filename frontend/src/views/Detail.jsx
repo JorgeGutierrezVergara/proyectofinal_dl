@@ -2,6 +2,7 @@ import { Button, Container, Card, Row, Col, Image } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { ENDPOINT } from "../config/constans";
 
 function Detail() {
   const { id } = useParams();
@@ -9,7 +10,7 @@ function Detail() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/productos/${id}`)
+      .get(`${ENDPOINT.productos}/${id}`)
       .then((response) => {
         setProductos(response.data[0]);
       })

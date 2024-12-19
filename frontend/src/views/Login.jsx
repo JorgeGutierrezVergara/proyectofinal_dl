@@ -6,6 +6,7 @@ import axios from "axios";
 import React, { useState, useContext } from "react";
 import Context from "../contexts/Context";
 import { useNavigate } from "react-router-dom";
+import { ENDPOINT } from "../config/constans";
 
 function Login() {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ function Login() {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/login", {
+      const response = await axios.post(ENDPOINT.login, {
         email,
         password,
       });

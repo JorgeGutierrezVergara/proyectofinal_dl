@@ -3,13 +3,14 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { MainPageProductCard } from "../components/Cards";
 import "../assets/style.css";
+import { ENDPOINT } from "../config/constans";
 
 const Home = () => {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/productos")
+      .get(ENDPOINT.productos)
       .then((response) => {
         setProductos(response.data[0]);
       })

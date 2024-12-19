@@ -1,8 +1,9 @@
 import { Button, Container, Card, Row, Col, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { HorizontalProductCard } from "../components/Cards";
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import { ENDPOINT } from "../config/constans";
 
 function Profile() {
   const navigate = useNavigate();
@@ -20,13 +21,13 @@ function Profile() {
       }
       try {
         const [favoritosRes, misProductosRes, userRes] = await Promise.all([
-          axios.get("http://localhost:3000/favoritos", {
+          axios.get(ENDPOINT.favoritos, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:3000/mis_productos", {
+          axios.get(ENDPOINT.misProductos, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("http://localhost:3000/usuarios", {
+          axios.get(ENDPOINT.users, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);

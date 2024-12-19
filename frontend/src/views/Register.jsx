@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import Container from "react-bootstrap/Container";
 import { useNavigate } from "react-router-dom";
+import { ENDPOINT } from "../config/constans";
 
 function Register() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function Register() {
     e.preventDefault();
     const userData = { nombre, email, password, phone };
     try {
-      await axios.post("http://localhost:3000/usuarios", userData);
+      await axios.post(ENDPOINT.usuarios, userData);
       console.log("Datos usuario nuevo: ", userData);
       navigate("/login");
     } catch (error) {
