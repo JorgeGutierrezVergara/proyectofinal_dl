@@ -18,7 +18,8 @@ function Register() {
     e.preventDefault();
     const userData = { nombre, email, password, phone };
     try {
-      await axios.post(ENDPOINT.usuarios, userData);
+      // await axios.post(ENDPOINT.usuarios, userData);
+      await axios.post(ENDPOINT.users, userData);
       console.log("Datos usuario nuevo: ", userData);
       navigate("/login");
     } catch (error) {
