@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import Context from "../contexts/Context";
 import axios from "axios";
-import { ENDPOINT } from "../config/constans";
 
 export const HorizontalProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -69,7 +68,7 @@ export const MainPageProductCard = ({ product }) => {
     if (!getDeveloper) return;
     try {
       const token = window.sessionStorage.getItem("token");
-      const { data } = await axios.get(`${ENDPOINT.productos}/${id}`, {
+      const { data } = await axios.get(`${ENDPOINT.favoritos}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIsFavorited(data.isFavorite);
@@ -93,12 +92,12 @@ export const MainPageProductCard = ({ product }) => {
         return;
       }
       if (isFavorited) {
-        await axios.delete(`http://localhost:3000/favoritos/${product.id}`, {
+        await axios.delete(`${ENDPOINT.favoritos}/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
       } else {
         await axios.post(
-          `http://localhost:3000/favoritos/${product.id}`,
+          `${ENDPOINT.favoritos}/${id}`,
           { producto_id: product.id },
           {
             headers: { Authorization: `Bearer ${token}` },
