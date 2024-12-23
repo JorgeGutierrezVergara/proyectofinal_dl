@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useContext, useEffect } from "react";
 import Context from "../contexts/Context";
 import axios from "axios";
+import { ENDPOINT } from "../config/constans";
 
 export const HorizontalProductCard = ({ product }) => {
   const navigate = useNavigate();
